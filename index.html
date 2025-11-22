@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gensyn TX Checker</title>
+  <style>
+    body { background:#0c0c0c; color:white; font-family:Arial; text-align:center; padding:40px; }
+    input { padding:10px; width:300px; border-radius:5px; border:none; }
+    button { padding:10px 20px; margin-top:10px; border:none; background:#7b41f5; color:white; border-radius:5px; cursor:pointer; }
+    #result { margin-top:30px; text-align:left; width:400px; margin:auto; }
+  </style>
+</head>
+<body>
+  <h1>Gensyn Testnet Transaction Checker</h1>
+  <input id="address" placeholder="Enter your EOA address"/>
+  <br>
+  <button onclick="checkTx()">Check</button>
+
+  <div id="result"></div>
+
+<script>
+async function checkTx() {
+  const addr = document.getElementById("address").value;
+  const resultBox = document.getElementById("result");
+  resultBox.innerHTML = "Loading...";
+
+  const url = `https://gensyn-testnet.g.alchemy.com/public/v1/?method=eth_getTransactionCount&params=["${addr}", "latest"]`;
+
+  try {
+    const res = await fetch(url, { method: "POST" });
+    const data = await res.json();
+
+    const txCount = parseInt(data.result, 16);
+
+    resultBox.innerHTML = `
+      <h2>Results</h2>
+      <p><b>EOA Address:</b> ${addr}</p>
+      <p><b>Total Transactions:</b> ${txCount}</p>
+    `;
+  } catch (e) {
+    resultBox.innerHTML = "Error fetching data.";
+  }
+}
+</script>
+</body>
+</html>
